@@ -1,0 +1,32 @@
+/? - pomoc
+/h - historia użytkownika
+/m - wysłanie wiadomości do kanału lub prywatnej na przykład:
+    /m stefan Treść do użytkownika stefan
+    /m #testowy Treść na kanał #testowy
+    /m @global Wiadomość do wszystkich na serwerze
+/j - wejście na kanał (lub jego utworzenie, jeśli nie istniał)
+    /j #testowy
+/l - opuszczenie kanału (i jego usunięcie jeśli nie ma na nim użytkowników)
+    /l #testowy
+/lu - lista użytkowników na wskazanym kanale
+    /lu #testowy
+/lc - lista kanałów na których jest użytkownik
+/uf - wysłanie pliku na kanał
+    /uf #testowy plik.txt
+    /uf @global plik.txt (udostępnienie dla wszystkich)
+/lf - lista plików na kanale w formacie
+    id_pliku uzytkownik_wysyłający : nazwa_pliku_u_nadawcy
+    /lf #testowy
+    /lf @global (lista plików udostępnionych wszystkim użytkownikom)
+/df - pobranie pliku z kanału (nie usuwa poprzedniej zawartości pliku po stronie klienta, tylko robi konkatenację z tym, który już jest)
+    /df id_pliku nazwa_pod_jaką_zapisać_plik
+    Id plików wyświetla polecenie /lf
+/ef - usunięcie pliku z kanału (trzeba być osobą, która wysłała plik)
+    /ef id_pliku
+/q - opuszczenie czata
+
+Polecenia /m, /j i /l ustawiają domyślne miejsce docelowe więc pisząc wiadomość można jej nie poprzedzać poleceniem /m (będzie wysłana tam gdzie poprzednia bądź na kanał na jaki właśnie weszliśmy bądź do wszystkich jeśli użyliśmy polecenia /l).
+Każdy użytkownik jest automatycznie przypięty do kanału specjalnego @global poprzez który są wysyłane wiadomości do wszystkich oraz udostępniane pliki dla wszystkich.
+
+Nazwy kanalów rozpoczynają się od znaku # (np. #testowy).
+Nazwy rozpoczynające się od @, to zastrzeżone konta specjalne (@server,@history,@ftp,@global) na potrzeby wewnętrznych funkcjonalności serwera.
