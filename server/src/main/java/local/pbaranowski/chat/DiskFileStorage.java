@@ -1,8 +1,6 @@
 package local.pbaranowski.chat;
 
 import local.pbaranowski.chat.commons.Constants;
-import local.pbaranowski.chat.commons.transportlayer.MessageInternetFrame;
-import local.pbaranowski.chat.commons.transportlayer.Transcoder;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,31 +14,8 @@ import static java.util.Collections.synchronizedMap;
 
 //@Slf4j
 class DiskFileStorage implements FileStorage {
-    private final Transcoder<MessageInternetFrame> frameTranscoder;
     private final Map<String, FileStorageRecord> filesUploaded = synchronizedMap(new HashMap<>());
     private final Object synchronizationObject = new Object();
-
-    DiskFileStorage(Transcoder<MessageInternetFrame> transcoder) {
-//        File storage = new File(Constants.FILE_STORAGE_DIR);
-//        if (!storage.isDirectory()) {
-//            storage.mkdirs();
-//        }
-        frameTranscoder = transcoder;
-    }
-
-    @Override
-    public void append(String key, byte[] data) {
-//        if (filesInProgress.containsKey(key)) {
-//            File file = new File(Constants.FILE_STORAGE_DIR
-//                    + File.separator
-//                    + filesInProgress.get(key).getDiskFilename());
-//            try (FileOutputStream fileOutputStream = new FileOutputStream(file, true)) {
-//                fileOutputStream.write(data);
-//            } catch (IOException e) {
-//                log.error(e.getMessage());
-//            }
-//        }
-    }
 
 
     @Override
@@ -107,14 +82,6 @@ class DiskFileStorage implements FileStorage {
         toDelete.forEach(this::delete);
     }
 
-    @Override
-    public synchronized String requestNewKey(String userName, String channel, String fileName) throws MaxFilesExceededException {
-        String key;
-        synchronized (synchronizationObject) {
-            key = createTmpFileKey();
-        }
-        return key;
-    }
 
     @Override
     public String getSender(String key) {

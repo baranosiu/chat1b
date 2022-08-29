@@ -4,9 +4,6 @@ import local.pbaranowski.chat.commons.ChatMessage;
 import local.pbaranowski.chat.commons.Constants;
 import local.pbaranowski.chat.commons.MessageType;
 import local.pbaranowski.chat.commons.NameValidators;
-import local.pbaranowski.chat.commons.transportlayer.Base64Transcoder;
-import local.pbaranowski.chat.commons.transportlayer.MessageInternetFrame;
-import local.pbaranowski.chat.commons.transportlayer.Transcoder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,8 +36,7 @@ public class MessageRouter {
         subscribe(global);
         HistoryClient historyClient = new HistoryClient();
         subscribe(historyClient);
-        Transcoder<MessageInternetFrame> transcoder = new Base64Transcoder<>();
-        FTPClient ftpClient = new FTPClient(transcoder, new DiskFileStorage(transcoder));
+        FTPClient ftpClient = new FTPClient(new DiskFileStorage());
         subscribe(ftpClient);
     }
 

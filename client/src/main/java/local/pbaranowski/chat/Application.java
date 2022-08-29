@@ -1,10 +1,6 @@
 package local.pbaranowski.chat;
 
 import local.pbaranowski.chat.commons.JMSClient;
-import local.pbaranowski.chat.commons.MessageType;
-import local.pbaranowski.chat.commons.transportlayer.Base64Transcoder;
-import local.pbaranowski.chat.commons.transportlayer.MessageInternetFrame;
-import local.pbaranowski.chat.commons.transportlayer.Transcoder;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -14,18 +10,13 @@ import javax.naming.NamingException;
 import local.pbaranowski.chat.commons.ChatMessage;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.UUID;
 
-import static java.util.Collections.synchronizedList;
 import static local.pbaranowski.chat.commons.Constants.*;
 
 @Slf4j
 public class Application {
 
-    private final Transcoder<MessageInternetFrame> transcoder = new Base64Transcoder<>();
     private final JMSClient jmsClient = new JMSClient();
     private String nickname = UUID.randomUUID().toString();
     private final String loginRandomNickname = nickname;
@@ -86,7 +77,7 @@ public class Application {
             if (line.startsWith("/df ")) {
                 String[] fields = line.split("[ ]+");
                 if (fields.length == 3) {
- //                   requestedFiles.request(fields[2]);
+                    //                   requestedFiles.request(fields[2]);
                 }
             }
             write(line);
@@ -113,33 +104,7 @@ public class Application {
         }
         String fileTransferUUID = UUID.randomUUID().toString();
         SimpleRESTClient.put(fileTransferUUID, filename);
-
-//        MessageInternetFrame frame = new MessageInternetFrame();
-//        frame.setMessageType(MessageType.MESSAGE_REGISTER_FILE_TO_UPLOAD);
-//        frame.setSourceName(filename);
-//        frame.setDestinationName(channel);
-//        frame.setData(fileTransferUUID.getBytes(StandardCharsets.UTF_8));
-//        synchronized (transcoder) {
-//            write("/rf " + transcoder.encodeObject(frame, MessageInternetFrame.class));
-//        }
-
-//        frame.setMessageType(MessageType.MESSAGE_APPEND_FILE);
-//        frame.setSourceName(filename);
-//        frame.setDestinationName(fileTransferUUID);
-//        try (FileInputStream fileInputStream = new FileInputStream(file)) {
-//            if (fileInputStream.available() > 0) {
-//                byte[] data = fileInputStream.readNBytes(256);
-//                frame.setData(data);
-//                synchronized (transcoder) {
-//                    write("/uf " + transcoder.encodeObject(frame, MessageInternetFrame.class));
-//                }
-//            }
-//        }
-//        frame.setData(null);
-//        frame.setMessageType(MessageType.MESSAGE_PUBLISH_FILE);
-        synchronized (transcoder) {
-            write("/pf " + channel + " " + fileTransferUUID + " " + filename);
-        }
+        write("/pf " + channel + " " + fileTransferUUID + " " + filename);
     }
 
     @SneakyThrows

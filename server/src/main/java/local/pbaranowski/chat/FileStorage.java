@@ -4,8 +4,6 @@ import java.io.InputStream;
 import java.util.List;
 
 public interface FileStorage {
-    String requestNewKey(String userName, String channel, String fileName) throws MaxFilesExceededException;
-    void append(String key, byte[] data);
     boolean publish(Message message) throws MaxFilesExceededException;
     void delete(String key);
     boolean hasFile (String key);
