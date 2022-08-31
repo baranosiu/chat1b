@@ -9,7 +9,7 @@ public interface FileStorage {
     boolean hasFile (String key);
     List<String> getFilesOnChannel(String channel);
     void deleteAllFilesOnChannel(String channel);
-    InputStream getFile(String key);
+//    InputStream getFile(String key);
     String getSender(String key);
     String getChannel(String key);
     String getOriginalFileName(String key);

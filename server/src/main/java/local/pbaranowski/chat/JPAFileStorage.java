@@ -1,46 +1,53 @@
 package local.pbaranowski.chat;
 
 import local.pbaranowski.chat.commons.Constants;
+import local.pbaranowski.chat.persistence.EntityRepository;
+import local.pbaranowski.chat.persistence.JPABinaryData;
+import local.pbaranowski.chat.persistence.RepoFactory;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.*;
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.persistence.EntityManagerFactory;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.synchronizedMap;
 
-//@Slf4j
-class DiskFileStorage implements FileStorage {
+@Slf4j
+@ApplicationScoped
+public class JPAFileStorage implements FileStorage {
     private final Map<String, FileStorageRecord> filesUploaded = synchronizedMap(new HashMap<>());
-    private final Object synchronizationObject = new Object();
+    private EntityRepository<JPABinaryData> binaryStorage = null;
+    @Inject
+    private RepoFactory repoFactory;
 
+    @PostConstruct
+    public void init() {
+        log.info("############# JPAFileStorage postconstruct");
+        this.binaryStorage = new EntityRepository<JPABinaryData>(repoFactory.getEntityManagerFactory(),JPABinaryData.class);
+    }
 
     @Override
     public boolean publish(Message message) throws MaxFilesExceededException {
         String sender = message.getSender();
-        String[] payload = message.getPayload().split(" ",3);
+        String[] payload = message.getPayload().split(" ", 3);
         String channel = payload[0];
-        String diskFilename = payload[1];
-        String filename = payload[2];
-        FileStorageRecord fileStorageRecord = new FileStorageRecord(sender,channel,filename,diskFilename);
+        String storageFilename = payload[1];
+        String userFilename = payload[2];
+        FileStorageRecord fileStorageRecord = new FileStorageRecord(sender, channel, userFilename, storageFilename);
         String key = createUniqueFileKey();
-        filesUploaded.put(key,fileStorageRecord);
-//        if(!filesInProgress.containsKey(key))
-//            return false;
-//        synchronized (synchronizationObject) {
-//            try {
-//                String uploadedKey = createUniqueFileKey();
-//                filesUploaded.put(uploadedKey, filesInProgress.get(key));
-//            } catch (MaxFilesExceededException excededException) {
-//                new File(filesInProgress.get(key).getDiskFilename()).delete();
-//                throw excededException;
-//            } finally {
-//                filesInProgress.remove(key);
-//            }
-//        }
+        filesUploaded.put(key, fileStorageRecord);
         return true;
     }
 
@@ -50,10 +57,8 @@ class DiskFileStorage implements FileStorage {
         if (key == null) return;
         FileStorageRecord file = filesUploaded.get(key);
         if (file != null) {
-            synchronized (synchronizationObject) {
                 filesUploaded.remove(key);
-            }
-            Files.delete(Paths.get(Constants.FILE_STORAGE_DIR + File.separator + file.getDiskFilename()));
+            Files.delete(Paths.get(Constants.FILE_STORAGE_DIR + File.separator + file.getStorageFilename()));
         }
     }
 
@@ -95,12 +100,12 @@ class DiskFileStorage implements FileStorage {
 
     @Override
     public String getOriginalFileName(String key) {
-        return filesUploaded.get(key).getFilename();
+        return filesUploaded.get(key).getUserFilename();
     }
 
     @Override
     public String getStorageFileName(String key) {
-        return filesUploaded.get(key).getDiskFilename();
+        return filesUploaded.get(key).getStorageFilename();
     }
 
     @SneakyThrows
@@ -116,9 +121,11 @@ class DiskFileStorage implements FileStorage {
                 return 0;
             }
         };
-//        return new FileInputStream(Constants.FILE_STORAGE_DIR + File.separator + filesUploaded.get(key).getDiskFilename());
     }
 
+    public void echo(String text) {
+        log.info("########## REST: {}", text);
+    }
 
     private String createUniqueFileKey() throws MaxFilesExceededException {
         for (int i = 1; i <= Constants.MAX_NUMBER_OF_FILES_IN_STORAGE; i++) {
@@ -129,14 +136,7 @@ class DiskFileStorage implements FileStorage {
         throw new MaxFilesExceededException();
     }
 
-    private String createTmpFileKey() throws MaxFilesExceededException {
-        for (int i = 1; i <= Constants.MAX_NUMBER_OF_FILES_IN_STORAGE; i++) {
-            String key = Integer.toString(i);
-            if (!filesUploaded.containsKey(key))
-                return key;
-        }
-        throw new MaxFilesExceededException();
+    public void writeEntity(JPABinaryData jpaBinaryData) {
+        binaryStorage.save(jpaBinaryData);
     }
-
 }
-

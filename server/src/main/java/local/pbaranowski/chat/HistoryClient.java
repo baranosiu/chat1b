@@ -18,8 +18,8 @@ import static local.pbaranowski.chat.commons.Constants.HISTORY_ENDPOINT_NAME;
 class HistoryClient implements Client, Runnable {
     @Setter
     private MessageRouter messageRouter;
-    private final HistoryPersistence historyPersistence = new HistoryJPAPersistence();
-//    private final LogSerializer logSerializer = new CSVLogSerializer();
+    @Inject
+    private HistoryJPAPersistence historyPersistence;
 
     @Override
     public String getName() {

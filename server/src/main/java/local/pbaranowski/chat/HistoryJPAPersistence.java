@@ -1,29 +1,30 @@
 package local.pbaranowski.chat;
 
-import local.pbaranowski.chat.persistence.EntityRepository;
-import local.pbaranowski.chat.persistence.HistoryRecord;
-import local.pbaranowski.chat.persistence.RepositoriesFactory;
-import lombok.RequiredArgsConstructor;
+import local.pbaranowski.chat.persistence.*;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.annotation.ManagedBean;
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Default;
 import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.PersistenceContext;
+import javax.persistence.EntityManagerFactory;
 import java.util.Iterator;
-import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @ApplicationScoped
-class HistoryJPAPersistence implements HistoryPersistence {
-    private LogSerializer logSerializer = new HistoryLogSerializer();
-    private RepositoriesFactory FACTORY = RepositoriesFactory.create("Chat");
-    private EntityRepository<HistoryRecord> historyRecordEntityRepository = FACTORY.getRepository(HistoryRecord.class);
+public class HistoryJPAPersistence implements HistoryPersistence {
+    private final LogSerializer logSerializer = new HistoryLogSerializer();
+    @Inject
+    private RepoFactory repoFactory;
+    private HistoryEntityRepository historyEntityRepository;
+
+    @PostConstruct
+    public void init() {
+        log.info("############# HistoryJPAPersistance postconstruct");
+        EntityManagerFactory FACTORY = repoFactory.getEntityManagerFactory();
+        this.historyEntityRepository = new HistoryEntityRepository(FACTORY);
+    }
 
     @SneakyThrows
     @Override
@@ -32,15 +33,12 @@ class HistoryJPAPersistence implements HistoryPersistence {
         historyRecord.setHistory(logSerializer.fromMessageToString(message));
         historyRecord.setNickname(message.getSender());
         log.info("History.save: {}", logSerializer.fromMessageToString(message));
-        historyRecordEntityRepository.save(historyRecord);
+        historyEntityRepository.save(historyRecord);
     }
 
     @SneakyThrows
     @Override
     public Iterator<String> retrieve(String user) {
-        // TODO
-//        BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
-//        return new BufferedReaderIterable(bufferedReader).iterator();
-        return historyRecordEntityRepository.findNickname(user).listIterator();
+        return historyEntityRepository.findNickname(user).listIterator();
     }
 }

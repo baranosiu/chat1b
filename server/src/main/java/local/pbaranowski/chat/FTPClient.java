@@ -7,18 +7,20 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.ejb.Stateful;
-import java.io.InputStream;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import java.util.List;
+
 import static local.pbaranowski.chat.commons.Constants.FTP_ENDPOINT_NAME;
 
 
 @Slf4j
 @RequiredArgsConstructor
-@Stateful
+@ApplicationScoped
 class FTPClient implements Client, Runnable {
     @Setter
     private MessageRouter messageRouter;
-    private final FileStorage fileStorage;
+    private final FileStorage fileStorage = new JPAFileStorage();
 
     @Override
     public String getName() {
@@ -89,14 +91,12 @@ class FTPClient implements Client, Runnable {
             return;
         }
 
-        try (InputStream inputStream = fileStorage.getFile(message.getReceiver())) {
-            if (inputStream == null) {
-                messageRouter.sendMessage(MessageType.MESSAGE_TEXT, FTP_ENDPOINT_NAME, message.getSender(), "ERROR: No file with id = " + message.getReceiver());
-            } else {
-                String storageFilename = fileStorage.getStorageFileName(message.getReceiver());
-                String userFilename = message.getPayload();
-                    messageRouter.sendMessage(MessageType.MESSAGE_SEND_CHUNK_TO_CLIENT, getName(), message.getSender(), storageFilename + " " + userFilename);
-            }
+        if (false /* TODO Sprawdzanie czy plik istnieje*/) {
+            messageRouter.sendMessage(MessageType.MESSAGE_TEXT, FTP_ENDPOINT_NAME, message.getSender(), "ERROR: No file with id = " + message.getReceiver());
+        } else {
+            String storageFilename = fileStorage.getStorageFileName(message.getReceiver());
+            String userFilename = message.getPayload();
+            messageRouter.sendMessage(MessageType.MESSAGE_SEND_CHUNK_TO_CLIENT, getName(), message.getSender(), storageFilename + " " + userFilename);
         }
     }
 
@@ -106,7 +106,7 @@ class FTPClient implements Client, Runnable {
                 .forEach(fileKey -> messageRouter.sendMessage(MessageType.MESSAGE_TEXT,
                         message.getReceiver(),
                         message.getSender(),
-                        DiskFileStorageUtils.fileRecordToString(fileKey, fileStorage.getSender(fileKey), fileStorage.getOriginalFileName(fileKey)))
+                        FileStorageUtils.fileRecordToString(fileKey, fileStorage.getSender(fileKey), fileStorage.getOriginalFileName(fileKey)))
                 );
     }
 

@@ -16,22 +16,15 @@ import static local.pbaranowski.chat.commons.Constants.HELP_FILE;
 
 //@Slf4j
 @NoArgsConstructor
-class SocketClient implements Runnable, Client {
-    //    private BufferedReader bufferedReader;
-//    private BufferedWriter bufferedWriter;
+class JMSClient implements Runnable, Client {
     private String name;
     @Setter
     private MessageRouter messageRouter;
     @Setter
-    private JMSChatClient jmsChatClient;
+    private JMSWriter jmsWriter;
     private String lastDestination;
     private static final String MESSAGE_FORMAT_STRING = "%s->%s %s";
     private final Object synchronizationObject = new Object();
-
-    // alias
-    public void init() {
-        socketClientInit();
-    }
 
     @SneakyThrows
     @Override
@@ -63,37 +56,10 @@ class SocketClient implements Runnable, Client {
 
     @SneakyThrows
     void socketClientInit() {
-//        String nickname = UUID.randomUUID().toString();
-//        try {
-//            while (true) {
-//                writeln("Enter name \\w{3,16}", null);
-//                nickname = bufferedReader.readLine();
-//                if (!NameValidators.isNameValid(nickname)) continue;
-//                if (messageRouter.getClients().contains(nickname)) {
-//                    writeln("Nick " + nickname + " already in use", null);
-//                    continue;
-//                }
-//                break;
-//            }
-//        setName(nickname);
-
-        //TODO: ustawianie nickname na start
         messageRouter.subscribe(this);
         messageRouter.sendMessage(new Message(MessageType.MESSAGE_JOIN_CHANNEL, getName(), Constants.GLOBAL_ENDPOINT_NAME, null));
         lastDestination = Constants.GLOBAL_ENDPOINT_NAME;
         messageRouter.sendMessage(new Message(MessageType.MESSAGE_TEXT, Constants.SERVER_ENDPOINT_NAME, getName(), "/? - pomoc"));
-//    } catch(
-//    IOException e)
-//
-//    {
-//        log.error("{} ", e.getMessage(), e);
-//    } finally
-//
-//    {
-//        socket.close();
-//        messageRouter.sendMessage(new Message(MessageType.MESSAGE_USER_DISCONNECTED, getName(), null, null));
-//    }
-
     }
 
     void messageFromJMS(String message) {
@@ -107,7 +73,7 @@ class SocketClient implements Runnable, Client {
             return;
         }
         if(text.startsWith("/q")) {
-            jmsChatClient.write(new ChatMessage("q:", "@server", name));
+            jmsWriter.write(new ChatMessage("q:", "@server", name));
             messageRouter.sendMessage(new Message(MessageType.MESSAGE_USER_DISCONNECTED, getName(), null, null));
             return;
         }
@@ -197,9 +163,7 @@ class SocketClient implements Runnable, Client {
         }
     }
 
-    // Aplikacja klienta wysyła ramki w formacie: /uf base64data
-    // koniec pliku gdy wyśle MessageType == MESSAGE_PUBLISH_FILE w payload (fields[1])
-    private void uploadFile(String text) {
+     private void uploadFile(String text) {
         String[] fields = text.split("[ ]+", 2);
         if (fields.length == 2) {
             sendMessage(MessageType.MESSAGE_APPEND_FILE, getName(), Constants.FTP_ENDPOINT_NAME, fields[1]);
@@ -270,9 +234,7 @@ class SocketClient implements Runnable, Client {
 
     @SneakyThrows
     private void write(String text, String prefix) {
-//        synchronized (synchronizationObject) {
-        jmsChatClient.write(new ChatMessage((prefix == null ? Constants.MESSAGE_TEXT_PREFIX : prefix) + text, "@server", name));
-//        }
+        jmsWriter.write(new ChatMessage((prefix == null ? Constants.MESSAGE_TEXT_PREFIX : prefix) + text, "@server", name));
     }
 
     private void storeInHistory(Message message) {

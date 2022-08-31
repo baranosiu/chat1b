@@ -1,6 +1,5 @@
 package local.pbaranowski.chat;
 
-import javax.enterprise.context.ApplicationScoped;
 import java.util.*;
 
 import static java.util.Collections.synchronizedMap;

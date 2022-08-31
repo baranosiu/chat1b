@@ -10,14 +10,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @ToString
-@NoArgsConstructor
-public class HistoryRecord implements EntityToStore {
+public class HistoryRecord implements EntityToStore{
     @Id
-    @GeneratedValue
-    Long id;
+    UUID id;
 
     LocalDateTime dateTime = LocalDateTime.now();
 
@@ -29,8 +28,11 @@ public class HistoryRecord implements EntityToStore {
     @Setter
     String nickname;
 
-    @Override
-    public Long getId() {
+    public UUID getId() {
         return id;
+    }
+
+    public HistoryRecord() {
+        this.id = UUID.randomUUID();
     }
 }

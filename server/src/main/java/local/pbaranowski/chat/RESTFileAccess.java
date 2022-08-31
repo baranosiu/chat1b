@@ -1,18 +1,22 @@
 package local.pbaranowski.chat;
 
+import local.pbaranowski.chat.persistence.JPABinaryData;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 
 @Slf4j
 @Path("/ftp")
 public class RESTFileAccess {
+
+    @Inject
+    private JPAFileStorage jpaFileStorage;
+
     @POST
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_OCTET_STREAM)
@@ -20,9 +24,9 @@ public class RESTFileAccess {
     @SneakyThrows
     public String uploadFile(@PathParam("id") String fileId, byte[] fileData) {
         log.info("REST: POST {} {}", fileId, fileData);
-        try (FileOutputStream fileOutputStream = new FileOutputStream("/tmp/" + fileId)) {
-            fileOutputStream.write(fileData);
-        }
+        jpaFileStorage.echo(fileId);
+        JPABinaryData jpaBinaryData = new JPABinaryData(fileId,"Tu leca binarne dane");
+        jpaFileStorage.writeEntity(jpaBinaryData);
         return "OK";
     }
 

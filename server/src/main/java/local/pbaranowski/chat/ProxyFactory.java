@@ -26,8 +26,6 @@ public class ProxyFactory {
     private static Properties prepareJndiProperties() {
         Properties properties = new Properties();
         properties.put(Context.INITIAL_CONTEXT_FACTORY, INITIAL_CONTEXT_FACTORY);
-//        properties.put(Context.PROVIDER_URL, PROVIDER_URL);
-//        properties.put(Context.SECURITY_AUTHENTICATION,"simple");
         properties.put(Context.SECURITY_PRINCIPAL,"chat");
         properties.put(Context.SECURITY_CREDENTIALS,"chat");
         properties.put(CLIENT_EJB_CONTEXT, true);

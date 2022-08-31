@@ -8,11 +8,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import javax.jms.JMSException;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,15 +26,17 @@ public class MessageRouter {
     private final ClientsCollection<Client> clients = new HashMapClients<>();
     //    private LogSerializer logSerializer;
     @Inject
-    private JMSChatClient jmsClient;
+    private JMSWriter jmsClient;
+    @Inject
+    private HistoryClient historyClient;// = new HistoryClient();
+    @Inject
+    private FTPClient ftpClient;
 
     @PostConstruct
     public void init() {
         ChannelClient global = new ChannelClient(Constants.GLOBAL_ENDPOINT_NAME, new HashMapClients<>());
         subscribe(global);
-        HistoryClient historyClient = new HistoryClient();
         subscribe(historyClient);
-        FTPClient ftpClient = new FTPClient(new DiskFileStorage());
         subscribe(ftpClient);
     }
 
@@ -53,8 +53,8 @@ public class MessageRouter {
             }
             var client = clients.getClient(message.getBody(ChatMessage.class).getFromId());
             System.out.println("########### Client: " + client.getName());
-            if (client instanceof SocketClient) {
-                ((SocketClient) client).messageFromJMS(chatMessage.getBody()); //TODO sprawdzić, czy działa
+            if (client instanceof JMSClient) {
+                ((JMSClient) client).messageFromJMS(chatMessage.getBody()); //TODO sprawdzić, czy działa
             }
         } catch (JMSException e) {
             throw new RuntimeException(e);
@@ -62,9 +62,6 @@ public class MessageRouter {
     }
 
     private void loginUser(ChatMessage chatMessage) {
-        //        try {
-//            while (true) {
-//                writeln("Enter name \\w{3,16}", null);
         String nickname = chatMessage.getBody().trim();
         if (!NameValidators.isNameValid(nickname)) {
             jmsClient.write(new ChatMessage("m: Invalid nickname. Enter name \\w{3,16}", "@server", chatMessage.getFromId()));
@@ -74,12 +71,12 @@ public class MessageRouter {
             jmsClient.write(new ChatMessage("m:" + "Nick " + nickname + " already in use", "@server", chatMessage.getFromId()));
             return;
         }
-        SocketClient socketClient = new SocketClient();
-        socketClient.setName(nickname);
-        socketClient.setMessageRouter(this);
-        socketClient.setJmsChatClient(jmsClient);
+        JMSClient JMSClient = new JMSClient();
+        JMSClient.setName(nickname);
+        JMSClient.setMessageRouter(this);
+        JMSClient.setJmsWriter(jmsClient);
         jmsClient.write(new ChatMessage("n:" + nickname, "@server", chatMessage.getFromId()));
-        socketClient.socketClientInit();
+        JMSClient.socketClientInit();
     }
 
     void subscribe(Client client) {
@@ -141,15 +138,16 @@ public class MessageRouter {
                 clients.getClient(message.getReceiver()).write(message);
                 break;
             case MESSAGE_USER_DISCONNECTED: {
-                Client socketClient = clients.getClient(message.getSender());
+                Client jmsClient = clients.getClient(message.getSender());
                 for (Client client : clients.getClients().values()) {
                     if (client instanceof ChannelClient) {
                         client.write(
-                                new Message(MessageType.MESSAGE_USER_DISCONNECTED, socketClient.getName(), client.getName(), null)
+                                new Message(MessageType.MESSAGE_USER_DISCONNECTED, jmsClient.getName(), client.getName(), null)
                         );
                         removeChannelClient(client);
                     }
                 }
+                clients.remove(jmsClient); //TODO sprawdzić
             }
         }
         return message;
