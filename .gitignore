@@ -3,3 +3,5 @@
 *.class
 /out
 /storage
+/client/target
+/server/target
