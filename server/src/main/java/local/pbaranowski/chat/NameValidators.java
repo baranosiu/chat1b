@@ -1,4 +1,4 @@
-package local.pbaranowski.chat.commons;
+package local.pbaranowski.chat;
 
 public class NameValidators {
     public static boolean isNameValid(String name) {

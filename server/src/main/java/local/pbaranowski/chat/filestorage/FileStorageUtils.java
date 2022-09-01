@@ -1,6 +1,6 @@
-package local.pbaranowski.chat;
+package local.pbaranowski.chat.filestorage;
 
-class FileStorageUtils {
+public class FileStorageUtils {
 
     private static final String FILE_LIST_FORMAT_STRING = "%4s %-16s : %s";
 

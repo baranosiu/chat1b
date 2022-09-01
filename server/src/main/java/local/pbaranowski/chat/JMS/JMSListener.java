@@ -1,6 +1,6 @@
-package local.pbaranowski.chat;
+package local.pbaranowski.chat.JMS;
 
-import local.pbaranowski.chat.commons.ChatMessage;
+import local.pbaranowski.chat.MessageRouter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.ejb.ActivationConfigProperty;
@@ -21,7 +21,7 @@ public class JMSListener implements MessageListener {
     @Override
     public void onMessage(Message message) {
         try {
-            var payload = message.getBody(ChatMessage.class);
+            var payload = message.getBody(JMSMessage.class);
             log.info("JMSListener onMessage: {}",payload);
             if(payload.getToId().equals("@login") || payload.getToId().equals("@server")) {
                 messageRouter.receiveJMSMessage(message);

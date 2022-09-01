@@ -1,4 +1,4 @@
-package local.pbaranowski.chat;
+package local.pbaranowski.chat.filestorage;
 
 import local.pbaranowski.chat.persistence.FileBinaryData;
 import lombok.SneakyThrows;

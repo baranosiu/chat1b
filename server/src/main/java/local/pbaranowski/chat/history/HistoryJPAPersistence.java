@@ -1,5 +1,8 @@
-package local.pbaranowski.chat;
+package local.pbaranowski.chat.history;
 
+import local.pbaranowski.chat.formatters.HistoryLogFormatter;
+import local.pbaranowski.chat.formatters.LogFormatter;
+import local.pbaranowski.chat.Message;
 import local.pbaranowski.chat.persistence.*;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +14,7 @@ import java.util.Iterator;
 @Slf4j
 @ApplicationScoped
 public class HistoryJPAPersistence implements HistoryPersistence {
-    private final LogSerializer logSerializer = new HistoryLogSerializer();
+    private final LogFormatter logFormatter = new HistoryLogFormatter();
     private HistoryEntityRepository historyEntityRepository;
 
     @PostConstruct
@@ -24,9 +27,9 @@ public class HistoryJPAPersistence implements HistoryPersistence {
     @Override
     public void save(Message message) {
         HistoryRecord historyRecord = new HistoryRecord();
-        historyRecord.setHistory(logSerializer.fromMessageToString(message));
+        historyRecord.setHistory(logFormatter.fromMessageToString(message));
         historyRecord.setNickname(message.getSender());
-        log.info("History.save: {}", logSerializer.fromMessageToString(message));
+        log.info("History.save: {}", logFormatter.fromMessageToString(message));
         historyEntityRepository.save(historyRecord);
     }
 

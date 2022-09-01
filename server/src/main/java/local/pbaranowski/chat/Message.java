@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
-class Message {
+public class Message {
     private final MessageType messageType;
     private final String sender;
     private final String receiver;

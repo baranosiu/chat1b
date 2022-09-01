@@ -11,26 +11,25 @@ import java.io.IOException;
 @Slf4j
 public class SimpleRESTClient {
 
-    public static void get(String id, String fileName) {
+    public static void get(String endpoint, String id, String fileName) {
         try (FileOutputStream fileOutputStream = new FileOutputStream(fileName)) {
-            fileOutputStream.write(Request.get("http://localhost:8080/server-2.0/ftp/" + id)
+            fileOutputStream.write(Request.get("http://" + endpoint + "/server-2.0/ftp/" + id)
                     .execute()
                     .returnContent()
                     .asBytes());
-            System.out.println("File "+fileName+" downloaded");
+            System.out.println("File " + fileName + " downloaded");
         } catch (IOException e) {
             log.error("IOException {}", e.getMessage(), e);
         }
     }
 
-    public static void put(String id, String fileName) {
+    public static void put(String endpoint, String id, String fileName) {
         try {
-            log.info(Request.post("http://localhost:8080/server-2.0/ftp/" + id)
+            Request.post("http://" + endpoint + "/server-2.0/ftp/" + id)
                     .bodyFile(new File(fileName), ContentType.APPLICATION_OCTET_STREAM)
                     .execute()
                     .returnContent()
-                    .asString());
-
+                    .asString();
         } catch (IOException e) {
             log.error("{}", e.getMessage(), e);
         }

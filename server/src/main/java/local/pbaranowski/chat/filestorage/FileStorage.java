@@ -1,5 +1,6 @@
-package local.pbaranowski.chat;
+package local.pbaranowski.chat.filestorage;
 
+import local.pbaranowski.chat.Message;
 import local.pbaranowski.chat.persistence.FileBinaryData;
 
 import java.util.List;

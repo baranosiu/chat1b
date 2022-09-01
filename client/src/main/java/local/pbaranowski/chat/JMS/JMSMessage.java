@@ -1,11 +1,11 @@
-package local.pbaranowski.chat.commons;
+package local.pbaranowski.chat.JMS;
 
 import lombok.Value;
 
 import java.io.Serializable;
 
 @Value
-public class ChatMessage implements Serializable {
+public class JMSMessage implements Serializable {
     String body;
     String fromId;
     String toId;

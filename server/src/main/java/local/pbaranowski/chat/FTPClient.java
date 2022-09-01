@@ -1,13 +1,13 @@
 package local.pbaranowski.chat;
 
 import local.pbaranowski.chat.commons.MessageType;
-import lombok.RequiredArgsConstructor;
+import local.pbaranowski.chat.filestorage.FileStorage;
+import local.pbaranowski.chat.filestorage.FileStorageUtils;
+import local.pbaranowski.chat.filestorage.MaxFilesExceededException;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateful;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.util.List;
@@ -17,7 +17,7 @@ import static local.pbaranowski.chat.commons.Constants.FTP_ENDPOINT_NAME;
 
 @Slf4j
 @ApplicationScoped
-class FTPClient implements Client {
+public class FTPClient implements Client {
     @Setter
     private MessageRouter messageRouter;
     @Inject
@@ -87,7 +87,7 @@ class FTPClient implements Client {
             return;
         }
 
-        if (false) { // TODO Do zrobienia prawdzanie czy plik istnieje
+        if (!fileStorage.hasFile(message.getReceiver())) {
             messageRouter.sendMessage(MessageType.MESSAGE_TEXT, FTP_ENDPOINT_NAME, message.getSender(), "ERROR: No file with id = " + message.getReceiver());
         } else {
             String storageFilename = fileStorage.getStorageFileName(message.getReceiver());

@@ -1,5 +1,6 @@
-package local.pbaranowski.chat;
+package local.pbaranowski.chat.filestorage;
 
+import local.pbaranowski.chat.Message;
 import local.pbaranowski.chat.commons.Constants;
 import local.pbaranowski.chat.persistence.BinaryEntityRepository;
 import local.pbaranowski.chat.persistence.FileBinaryData;

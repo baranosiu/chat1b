@@ -1,4 +1,6 @@
-package local.pbaranowski.chat.commons;
+package local.pbaranowski.chat.JMS;
+
+import local.pbaranowski.chat.commons.ProxyFactory;
 
 import javax.jms.*;
 import javax.naming.NamingException;
@@ -6,9 +8,9 @@ import javax.naming.NamingException;
 public class JMSClient {
     private static final String JMS_FACTORY = "jms/RemoteConnectionFactory";
     private static final String JMS_TOPIC = "jms/Topic/Chat";
-    private JMSConsumer jmsConsumer;
-    private JMSProducer jmsProducer;
-    private Topic topic;
+    private final JMSConsumer jmsConsumer;
+    private final JMSProducer jmsProducer;
+    private final Topic topic;
 
     public JMSClient(String endpoint) throws NamingException {
         var proxyFactory = new ProxyFactory(endpoint);
@@ -24,9 +26,9 @@ public class JMSClient {
         jmsConsumer.setMessageListener(messageListener);
     }
 
-    public void write(ChatMessage chatMessage) {
+    public void write(JMSMessage jmsMessage) {
         synchronized (jmsProducer) {
-            jmsProducer.send(topic, chatMessage);
+            jmsProducer.send(topic, jmsMessage);
         }
     }
 

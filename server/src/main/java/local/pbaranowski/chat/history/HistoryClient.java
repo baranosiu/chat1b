@@ -1,6 +1,10 @@
-package local.pbaranowski.chat;
+package local.pbaranowski.chat.history;
 
+import local.pbaranowski.chat.Client;
+import local.pbaranowski.chat.Message;
+import local.pbaranowski.chat.MessageRouter;
 import local.pbaranowski.chat.commons.MessageType;
+import local.pbaranowski.chat.history.HistoryPersistence;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -12,11 +16,11 @@ import static local.pbaranowski.chat.commons.Constants.HISTORY_ENDPOINT_NAME;
 
 @Slf4j
 @ApplicationScoped
-class HistoryClient implements Client {
+public class HistoryClient implements Client {
     @Setter
     private MessageRouter messageRouter;
     @Inject
-    private HistoryJPAPersistence historyPersistence;
+    private HistoryPersistence historyPersistence;
 
     @Override
     public String getName() {
@@ -38,12 +42,12 @@ class HistoryClient implements Client {
         }
     }
 
-    void save(Message message) {
+    public void save(Message message) {
         log.info("HistoryClient.save {}",message);
         historyPersistence.save(message);
     }
 
-    Iterator<String> retrieve(String user) {
+    public Iterator<String> retrieve(String user) {
         return historyPersistence.retrieve(user);
     }
 

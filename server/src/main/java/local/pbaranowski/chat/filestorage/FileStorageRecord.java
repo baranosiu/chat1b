@@ -1,10 +1,10 @@
-package local.pbaranowski.chat;
+package local.pbaranowski.chat.filestorage;
 
 import lombok.Value;
 
 // TODO: Przerobić w taki sposób, aby FTPClient nie musiał wiedzieć jaka jest struktura danych w storage
 @Value
-class FileStorageRecord {
+public class FileStorageRecord {
     String sender;
     String channel;
     String userFilename; // Nazwa nadana przez użytkownika wysyłającego

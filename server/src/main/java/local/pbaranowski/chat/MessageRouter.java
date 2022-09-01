@@ -1,9 +1,10 @@
 package local.pbaranowski.chat;
 
-import local.pbaranowski.chat.commons.ChatMessage;
+import local.pbaranowski.chat.JMS.JMSWriter;
+import local.pbaranowski.chat.JMS.JMSMessage;
 import local.pbaranowski.chat.commons.Constants;
 import local.pbaranowski.chat.commons.MessageType;
-import local.pbaranowski.chat.commons.NameValidators;
+import local.pbaranowski.chat.history.HistoryClient;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +26,7 @@ public class MessageRouter {
     @Getter
     private final ClientsCollection<Client> clients = new HashMapClients<>();
     @Inject
-    private JMSWriter jmsClient;
+    private JMSWriter jmsWriter;
     @Inject
     private HistoryClient historyClient;
     @Inject
@@ -33,54 +34,53 @@ public class MessageRouter {
 
     @PostConstruct
     public void init() {
-        ChannelClient global = new ChannelClient(Constants.GLOBAL_ENDPOINT_NAME, new HashMapClients<>());
-        subscribe(global);
+        ChannelClient globalClient = new ChannelClient(Constants.GLOBAL_ENDPOINT_NAME, new HashMapClients<>());
+        subscribe(globalClient);
         subscribe(historyClient);
         subscribe(ftpClient);
     }
 
-    void receiveJMSMessage(javax.jms.Message message) {
+    public void receiveJMSMessage(javax.jms.Message message) {
         try {
-            ChatMessage chatMessage = message.getBody(ChatMessage.class);
-            if (chatMessage.getFromId().equals("@server"))
+            JMSMessage jmsMessage = message.getBody(JMSMessage.class);
+            if (jmsMessage.getFromId().equals("@server"))
                 return;
-            if (chatMessage.getToId().equals("@login")) {
-                loginUser(chatMessage);
+            if (jmsMessage.getToId().equals("@login")) {
+                loginUser(jmsMessage);
                 return;
             }
-            var client = clients.getClient(message.getBody(ChatMessage.class).getFromId());
-            if (client instanceof JMSClient) {
-                ((JMSClient) client).messageFromJMS(chatMessage.getBody()); //TODO sprawdzić, czy działa
+            var client = clients.getClient(message.getBody(JMSMessage.class).getFromId());
+            if (client instanceof RemoteJMSClient) { // Wiadomość obsługuje najpierw odpowiedni obiekt klienta i dopiero on
+                                                     // decyduje czy ewentualnie przesyłać ją (już bezpośrednio bez JMS)
+                                                     // ponownie do MessageRoutera
+                ((RemoteJMSClient) client).messageFromJMS(jmsMessage.getBody());
             }
         } catch (JMSException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void loginUser(ChatMessage chatMessage) {
-        String nickname = chatMessage.getBody().trim();
+    private void loginUser(JMSMessage jmsMessage) {
+        String nickname = jmsMessage.getBody().trim();
         if (!NameValidators.isNameValid(nickname)) {
-            jmsClient.write(new ChatMessage(MESSAGE_TEXT_PREFIX + "Invalid nickname. Enter name \\w{3,16}", "@server", chatMessage.getFromId()));
+            jmsWriter.write(new JMSMessage(MESSAGE_TEXT_PREFIX + "Invalid nickname. Enter name \\w{3,16}", "@server", jmsMessage.getFromId()));
             return;
         }
         if (getClients().contains(nickname)) {
-            jmsClient.write(new ChatMessage(MESSAGE_TEXT_PREFIX + "Nick " + nickname + " already in use", "@server", chatMessage.getFromId()));
+            jmsWriter.write(new JMSMessage(MESSAGE_TEXT_PREFIX + "Nick " + nickname + " already in use", "@server", jmsMessage.getFromId()));
             return;
         }
-        JMSClient JMSClient = new JMSClient();
-        JMSClient.setName(nickname);
-        JMSClient.setMessageRouter(this);
-        JMSClient.setJmsWriter(jmsClient);
-        jmsClient.write(new ChatMessage(MESSAGE_SET_NICKNAME_PREFIX + nickname, "@server", chatMessage.getFromId()));
-        JMSClient.jmsClientInit();
+        RemoteJMSClient remoteJMSClient = new RemoteJMSClient(nickname,this,jmsWriter);
+        jmsWriter.write(new JMSMessage(MESSAGE_SET_NICKNAME_PREFIX + nickname, "@server", jmsMessage.getFromId()));
+        remoteJMSClient.jmsClientInit();
     }
 
-    void subscribe(Client client) {
+    public void subscribe(Client client) {
         clients.add(client);
         client.setMessageRouter(this);
     }
 
-    Message sendMessage(Message message) {
+    public Message sendMessage(Message message) {
         switch (message.getMessageType()) {
             case MESSAGE_TO_ALL:
                 clients.forEach(client -> client.write(message));
@@ -160,7 +160,7 @@ public class MessageRouter {
     }
 
 
-    Message sendMessage(MessageType messageType, String source, String destination, String payload) {
+    public Message sendMessage(MessageType messageType, String source, String destination, String payload) {
         return sendMessage(new Message(messageType, source, destination, payload));
     }
 

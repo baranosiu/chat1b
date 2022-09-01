@@ -1,6 +1,6 @@
-package local.pbaranowski.chat;
+package local.pbaranowski.chat.JMS;
 
-import local.pbaranowski.chat.commons.ChatMessage;
+import local.pbaranowski.chat.ProxyFactory;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.PostConstruct;
@@ -27,10 +27,10 @@ public class JMSWriter {
         }
     }
 
-    public void write(ChatMessage chatMessage) {
-        log.info("JMSChatClient write {}", chatMessage);
+    public void write(JMSMessage jmsMessage) {
+        log.info("JMSChatClient write {}", jmsMessage);
         try (JMSContext context = connectionFactory.createContext()) {
-            context.createProducer().send(topic, chatMessage);
+            context.createProducer().send(topic, jmsMessage);
         } catch (Exception e) {
             log.error(e.getMessage());
         }

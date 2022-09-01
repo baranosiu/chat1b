@@ -1,13 +1,13 @@
 package local.pbaranowski.chat;
 
-import local.pbaranowski.chat.commons.JMSClient;
+import local.pbaranowski.chat.JMS.JMSClient;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.jms.JMSException;
 import javax.naming.NamingException;
 
-import local.pbaranowski.chat.commons.ChatMessage;
+import local.pbaranowski.chat.JMS.JMSMessage;
 
 import java.io.*;
 import java.util.UUID;
@@ -16,6 +16,7 @@ import static local.pbaranowski.chat.commons.Constants.*;
 
 @Slf4j
 public class Application {
+    private static String endpoint = DEFAULT_ENDPOINT;
     private final JMSClient jmsClient;
     private String nickname = UUID.randomUUID().toString();
     private final String loginRandomNickname = nickname;
@@ -25,13 +26,13 @@ public class Application {
         jmsClient = new JMSClient(endpoint);
         jmsClient.setJMSListener(message -> {
             try {
-                ChatMessage chatMessage = message.getBody(ChatMessage.class);
+                JMSMessage jmsMessage = message.getBody(JMSMessage.class);
 //                log.info("JMS Message received: {}", chatMessage);
-                String messageToId = chatMessage.getToId();
+                String messageToId = jmsMessage.getToId();
                 if (!messageToId.equals("") && !messageToId.equals(nickname) && !messageToId.equals(loginRandomNickname)) {
                     return;
                 }
-                var line = chatMessage.getBody();
+                var line = jmsMessage.getBody();
                 if (line.startsWith(MESSAGE_TEXT_PREFIX)) {
                     System.out.println(line.substring(2));
                 } else if (line.startsWith(MESSAGE_FILE_PREFIX)) {
@@ -53,7 +54,6 @@ public class Application {
     }
 
     public static void main(String[] args) throws IOException, NamingException {
-        String endpoint = DEFAULT_ENDPOINT;
         if (args.length == 1) {
             endpoint = args[0];
         }
@@ -71,12 +71,6 @@ public class Application {
             if (line.startsWith("/uf ")) {
                 uploadFile(line);
                 continue;
-            }
-            if (line.startsWith("/df ")) {
-                String[] fields = line.split("[ ]+");
-                if (fields.length == 3) {
-                    //                   requestedFiles.request(fields[2]);
-                }
             }
             write(line);
         }
@@ -101,20 +95,20 @@ public class Application {
             return;
         }
         String fileTransferUUID = UUID.randomUUID().toString();
-        SimpleRESTClient.put(fileTransferUUID, filename);
+        SimpleRESTClient.put(endpoint, fileTransferUUID, filename);
         write("/pf " + channel + " " + fileTransferUUID + " " + filename);
     }
 
     @SneakyThrows
     private void write(String text) {
-        jmsClient.write(new ChatMessage(text, nickname, destinationSystem));
+        jmsClient.write(new JMSMessage(text, nickname, destinationSystem));
     }
 
     @SneakyThrows
     private void receiveFile(String line) {
         String receiverText = line.substring(2);
         String[] fields = receiverText.split(" ", 2);
-        SimpleRESTClient.get(fields[0], fields[1]);
+        SimpleRESTClient.get(endpoint, fields[0], fields[1]);
     }
 
     private void setNickname(String nickname) {

@@ -1,10 +1,11 @@
 package local.pbaranowski.chat;
 
-import local.pbaranowski.chat.commons.ChatMessage;
+import local.pbaranowski.chat.JMS.JMSWriter;
+import local.pbaranowski.chat.JMS.JMSMessage;
 import local.pbaranowski.chat.commons.Constants;
 import local.pbaranowski.chat.commons.MessageType;
-import local.pbaranowski.chat.commons.NameValidators;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
 
@@ -16,15 +17,20 @@ import static local.pbaranowski.chat.commons.Constants.HELP_FILE;
 import static local.pbaranowski.chat.commons.Constants.MESSAGE_QUIT_PREFIX;
 
 //@Slf4j
-@NoArgsConstructor
-class JMSClient implements Client {
+@RequiredArgsConstructor
+class RemoteJMSClient implements Client {
     private String name;
     @Setter
     private MessageRouter messageRouter;
-    @Setter
     private JMSWriter jmsWriter;
     private String lastDestination;
     private static final String MESSAGE_FORMAT_STRING = "%s->%s %s";
+
+    public RemoteJMSClient(String name, MessageRouter messageRouter, JMSWriter jmsWriter) {
+        this.name = name;
+        this.messageRouter = messageRouter;
+        this.jmsWriter = jmsWriter;
+    }
 
     @SneakyThrows
     @Override
@@ -45,9 +51,9 @@ class JMSClient implements Client {
         return name;
     }
 
-    void setName(String name) {
-        this.name = name;
-    }
+//    void setName(String name) {
+//        this.name = name;
+//    }
 
     @SneakyThrows
     void jmsClientInit() {
@@ -68,7 +74,7 @@ class JMSClient implements Client {
             return;
         }
         if(text.startsWith("/q")) {
-            jmsWriter.write(new ChatMessage(MESSAGE_QUIT_PREFIX, "@server", name));
+            jmsWriter.write(new JMSMessage(MESSAGE_QUIT_PREFIX, "@server", name));
             messageRouter.sendMessage(new Message(MessageType.MESSAGE_USER_DISCONNECTED, getName(), null, null));
             return;
         }
@@ -229,7 +235,7 @@ class JMSClient implements Client {
 
     @SneakyThrows
     private void write(String text, String prefix) {
-        jmsWriter.write(new ChatMessage((prefix == null ? Constants.MESSAGE_TEXT_PREFIX : prefix) + text, "@server", name));
+        jmsWriter.write(new JMSMessage((prefix == null ? Constants.MESSAGE_TEXT_PREFIX : prefix) + text, "@server", name));
     }
 
     private void storeInHistory(Message message) {
