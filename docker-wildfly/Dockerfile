@@ -1,4 +1,5 @@
 FROM quay.io/wildfly/wildfly:26.1.1.Final
+#ADD docker-wildfly/postgresql-42.4.2.jar /opt/jboss/wildfly/standalone/deployments/
 ADD server/target/server-2.0.war /opt/jboss/wildfly/standalone/deployments/
 ADD docker-wildfly/chat.xml /opt/jboss/wildfly/standalone/configuration/
 RUN /opt/jboss/wildfly/bin/add-user.sh -a -u 'chat' -p 'chat'

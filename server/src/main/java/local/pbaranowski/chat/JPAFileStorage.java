@@ -3,19 +3,11 @@ package local.pbaranowski.chat;
 import local.pbaranowski.chat.commons.Constants;
 import local.pbaranowski.chat.persistence.BinaryEntityRepository;
 import local.pbaranowski.chat.persistence.FileBinaryData;
-import local.pbaranowski.chat.persistence.RepoFactory;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.persistence.EntityManagerFactory;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -25,15 +17,12 @@ import static java.util.Collections.synchronizedMap;
 @ApplicationScoped
 public class JPAFileStorage implements FileStorage {
     private final Map<String, FileStorageRecord> filesUploaded = synchronizedMap(new HashMap<>());
-    @Inject
-    private RepoFactory repoFactory;
     private BinaryEntityRepository binaryEntityRepository;
 
     @PostConstruct
     public void init() {
         log.info("############# JPAFileStorage postconstruct");
-        EntityManagerFactory factory = repoFactory.getEntityManagerFactory();
-        this.binaryEntityRepository = new BinaryEntityRepository(factory);
+        this.binaryEntityRepository = new BinaryEntityRepository();
     }
 
     @Override
@@ -56,7 +45,7 @@ public class JPAFileStorage implements FileStorage {
         FileStorageRecord file = filesUploaded.get(key);
         if (file != null) {
                 filesUploaded.remove(key);
-            Files.delete(Paths.get(Constants.FILE_STORAGE_DIR + File.separator + file.getStorageFilename()));
+                binaryEntityRepository.delete(UUID.fromString(key));
         }
     }
 
@@ -104,25 +93,6 @@ public class JPAFileStorage implements FileStorage {
     @Override
     public String getStorageFileName(String key) {
         return filesUploaded.get(key).getStorageFilename();
-    }
-
-    @SneakyThrows
-    public InputStream getFile(String key) {
-        return new InputStream() {
-            @Override
-            public int read() throws IOException {
-                return 0;
-            }
-
-            @Override
-            public int available() {
-                return 0;
-            }
-        };
-    }
-
-    public void echo(String text) {
-        log.info("########## REST: {}", text);
     }
 
     private String createUniqueFileKey() throws MaxFilesExceededException {
