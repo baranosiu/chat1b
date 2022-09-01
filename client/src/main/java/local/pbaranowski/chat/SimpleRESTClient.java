@@ -33,7 +33,6 @@ public class SimpleRESTClient {
 
         } catch (IOException e) {
             log.error("{}", e.getMessage(), e);
-
         }
     }
 }

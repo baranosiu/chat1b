@@ -5,6 +5,7 @@
              version="2.2">
     <persistence-unit name="Chat" transaction-type="RESOURCE_LOCAL">
         <class>local.pbaranowski.chat.persistence.HistoryRecord</class>
+        <class>local.pbaranowski.chat.persistence.FileBinaryData</class>
         <properties>
             <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://postgresql:5432/chat"/>
             <property name="javax.persistence.jdbc.user" value="admin"/>

@@ -76,7 +76,7 @@ public class MessageRouter {
         JMSClient.setMessageRouter(this);
         JMSClient.setJmsWriter(jmsClient);
         jmsClient.write(new ChatMessage("n:" + nickname, "@server", chatMessage.getFromId()));
-        JMSClient.socketClientInit();
+        JMSClient.jmsClientInit();
     }
 
     void subscribe(Client client) {

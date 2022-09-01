@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateful;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -15,12 +16,12 @@ import static local.pbaranowski.chat.commons.Constants.FTP_ENDPOINT_NAME;
 
 
 @Slf4j
-@RequiredArgsConstructor
 @ApplicationScoped
-class FTPClient implements Client, Runnable {
+class FTPClient implements Client {
     @Setter
     private MessageRouter messageRouter;
-    private final FileStorage fileStorage = new JPAFileStorage();
+    @Inject
+    private FileStorage fileStorage;
 
     @Override
     public String getName() {
@@ -72,11 +73,6 @@ class FTPClient implements Client, Runnable {
         } catch (MaxFilesExceededException e) {
             messageRouter.sendMessage(MessageType.MESSAGE_TEXT, message.getReceiver(), message.getSender(), "ERROR: " + e.getClass().getSimpleName());
         }
-    }
-
-    @Override
-    public void run() {
-        messageRouter.subscribe(this);
     }
 
     @SneakyThrows

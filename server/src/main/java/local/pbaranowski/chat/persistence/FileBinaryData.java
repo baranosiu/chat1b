@@ -1,27 +1,24 @@
 package local.pbaranowski.chat.persistence;
 
 import lombok.*;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
-public class JPABinaryData implements EntityToStore {
+public class FileBinaryData implements EntityToStore {
     @Id
     UUID id;
 
-    @Lob
-    @Column(columnDefinition="BLOB")
+//    @Column(columnDefinition="BLOB")
     @Getter
     @Setter
     byte[] binaryData;
 
-    public JPABinaryData(String storageFilename, byte[] binaryData) {
+    public FileBinaryData(String storageFilename, byte[] binaryData) {
         this.id = UUID.fromString(storageFilename);
         this.binaryData = binaryData;
-    }
-
-    public JPABinaryData() {
     }
 
     @Override

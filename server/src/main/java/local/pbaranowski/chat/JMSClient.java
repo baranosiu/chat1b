@@ -16,7 +16,7 @@ import static local.pbaranowski.chat.commons.Constants.HELP_FILE;
 
 //@Slf4j
 @NoArgsConstructor
-class JMSClient implements Runnable, Client {
+class JMSClient implements Client {
     private String name;
     @Setter
     private MessageRouter messageRouter;
@@ -45,17 +45,12 @@ class JMSClient implements Runnable, Client {
         return name;
     }
 
-    @Override
-    public void run() {
-        socketClientInit();
-    }
-
     void setName(String name) {
         this.name = name;
     }
 
     @SneakyThrows
-    void socketClientInit() {
+    void jmsClientInit() {
         messageRouter.subscribe(this);
         messageRouter.sendMessage(new Message(MessageType.MESSAGE_JOIN_CHANNEL, getName(), Constants.GLOBAL_ENDPOINT_NAME, null));
         lastDestination = Constants.GLOBAL_ENDPOINT_NAME;

@@ -9,7 +9,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManagerFactory;
 import java.util.Iterator;
-import java.util.UUID;
 
 @Slf4j
 @ApplicationScoped

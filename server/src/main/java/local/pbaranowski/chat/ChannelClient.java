@@ -9,7 +9,7 @@ import static local.pbaranowski.chat.commons.MessageType.*;
 
 //@Slf4j
 @RequiredArgsConstructor
-class ChannelClient implements Client, Runnable {
+class ChannelClient implements Client {
     private final String name;
     @Setter
     private MessageRouter messageRouter;
@@ -59,11 +59,6 @@ class ChannelClient implements Client, Runnable {
     @Override
     public boolean isEmpty() {
         return clients.isEmpty();
-    }
-
-    @Override
-    public void run() {
-        // Bez kolejkowania i obsługi kolejki w osobnym wątku, więc w tej chwili puste
     }
 
     ClientsCollection<Client> getClients() {

@@ -15,7 +15,7 @@ import static local.pbaranowski.chat.commons.Constants.HISTORY_ENDPOINT_NAME;
 
 @Slf4j
 @ApplicationScoped
-class HistoryClient implements Client, Runnable {
+class HistoryClient implements Client {
     @Setter
     private MessageRouter messageRouter;
     @Inject
@@ -39,11 +39,6 @@ class HistoryClient implements Client, Runnable {
             default:
                 break;
         }
-    }
-
-    @Override
-    public void run() {
-        messageRouter.subscribe(this);
     }
 
     void save(Message message) {
