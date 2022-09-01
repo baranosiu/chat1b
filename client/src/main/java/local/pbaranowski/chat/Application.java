@@ -20,7 +20,7 @@ public class Application {
     private final JMSClient jmsClient;
     private String nickname = UUID.randomUUID().toString();
     private final String loginRandomNickname = nickname;
-    private String destinationSystem = "@login";
+    private String destinationSystem = LOGIN_ENDPOINT_NAME;
 
     public Application(String endpoint) throws NamingException {
         jmsClient = new JMSClient(endpoint);
@@ -39,7 +39,7 @@ public class Application {
                     receiveFile(line);
                 } else if (line.startsWith(MESSAGE_SET_NICKNAME_PREFIX)) {
                     setNickname(line.substring(2));
-                    destinationSystem = "@server";
+                    destinationSystem = SERVER_ENDPOINT_NAME;
                 } else if (line.startsWith(MESSAGE_QUIT_PREFIX)) {
                     quit();
                 }

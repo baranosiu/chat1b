@@ -13,6 +13,7 @@ public class Constants {
     public static final String FTP_ENDPOINT_NAME = "@ftp";
     public static final String HISTORY_ENDPOINT_NAME = "@history";
     public static final String GLOBAL_ENDPOINT_NAME = "@global";
+    public static final String LOGIN_ENDPOINT_NAME = "@login";
 
     private Constants() {
     }

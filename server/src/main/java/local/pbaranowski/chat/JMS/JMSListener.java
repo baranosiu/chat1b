@@ -10,6 +10,9 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 
+import static local.pbaranowski.chat.commons.Constants.LOGIN_ENDPOINT_NAME;
+import static local.pbaranowski.chat.commons.Constants.SERVER_ENDPOINT_NAME;
+
 @Slf4j
 @MessageDriven(activationConfig = {
         @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Topic"),
@@ -23,7 +26,7 @@ public class JMSListener implements MessageListener {
         try {
             var payload = message.getBody(JMSMessage.class);
             log.info("JMSListener onMessage: {}",payload);
-            if(payload.getToId().equals("@login") || payload.getToId().equals("@server")) {
+            if(payload.getToId().equals(LOGIN_ENDPOINT_NAME) || payload.getToId().equals(SERVER_ENDPOINT_NAME)) {
                 messageRouter.receiveJMSMessage(message);
             }
         } catch (JMSException e) {

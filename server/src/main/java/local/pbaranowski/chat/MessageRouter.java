@@ -34,7 +34,7 @@ public class MessageRouter {
 
     @PostConstruct
     public void init() {
-        ChannelClient globalClient = new ChannelClient(Constants.GLOBAL_ENDPOINT_NAME, new HashMapClients<>());
+        ChannelClient globalClient = new ChannelClient(GLOBAL_ENDPOINT_NAME, new HashMapClients<>());
         subscribe(globalClient);
         subscribe(historyClient);
         subscribe(ftpClient);
@@ -43,9 +43,9 @@ public class MessageRouter {
     public void receiveJMSMessage(javax.jms.Message message) {
         try {
             JMSMessage jmsMessage = message.getBody(JMSMessage.class);
-            if (jmsMessage.getFromId().equals("@server"))
+            if (jmsMessage.getFromId().equals(SERVER_ENDPOINT_NAME))
                 return;
-            if (jmsMessage.getToId().equals("@login")) {
+            if (jmsMessage.getToId().equals(LOGIN_ENDPOINT_NAME)) {
                 loginUser(jmsMessage);
                 return;
             }
@@ -63,15 +63,15 @@ public class MessageRouter {
     private void loginUser(JMSMessage jmsMessage) {
         String nickname = jmsMessage.getBody().trim();
         if (!NameValidators.isNameValid(nickname)) {
-            jmsWriter.write(new JMSMessage(MESSAGE_TEXT_PREFIX + "Invalid nickname. Enter name \\w{3,16}", "@server", jmsMessage.getFromId()));
+            jmsWriter.write(new JMSMessage(MESSAGE_TEXT_PREFIX + "Invalid nickname. Enter name \\w{3,16}", SERVER_ENDPOINT_NAME, jmsMessage.getFromId()));
             return;
         }
         if (getClients().contains(nickname)) {
-            jmsWriter.write(new JMSMessage(MESSAGE_TEXT_PREFIX + "Nick " + nickname + " already in use", "@server", jmsMessage.getFromId()));
+            jmsWriter.write(new JMSMessage(MESSAGE_TEXT_PREFIX + "Nick " + nickname + " already in use", SERVER_ENDPOINT_NAME, jmsMessage.getFromId()));
             return;
         }
         RemoteJMSClient remoteJMSClient = new RemoteJMSClient(nickname,this,jmsWriter);
-        jmsWriter.write(new JMSMessage(MESSAGE_SET_NICKNAME_PREFIX + nickname, "@server", jmsMessage.getFromId()));
+        jmsWriter.write(new JMSMessage(MESSAGE_SET_NICKNAME_PREFIX + nickname, SERVER_ENDPOINT_NAME, jmsMessage.getFromId()));
         remoteJMSClient.jmsClientInit();
     }
 

@@ -3,6 +3,7 @@ package local.pbaranowski.chat;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import static local.pbaranowski.chat.commons.Constants.GLOBAL_ENDPOINT_NAME;
 import static local.pbaranowski.chat.commons.Constants.SERVER_ENDPOINT_NAME;
 import static local.pbaranowski.chat.commons.MessageType.*;
 
@@ -43,7 +44,7 @@ class ChannelClient implements Client {
                 break;
             case MESSAGE_USER_DISCONNECTED:
                 clients.remove(messageRouter.getClients().getClient(message.getSender()));
-                if (getName().equals("@global"))
+                if (getName().equals(GLOBAL_ENDPOINT_NAME))
                     writeToAll(new Message(MESSAGE_TEXT, SERVER_ENDPOINT_NAME, getName(), message.getSender() + " disconnected"));
                 break;
             default:

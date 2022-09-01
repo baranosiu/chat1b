@@ -13,8 +13,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import static local.pbaranowski.chat.commons.Constants.HELP_FILE;
-import static local.pbaranowski.chat.commons.Constants.MESSAGE_QUIT_PREFIX;
+import static local.pbaranowski.chat.commons.Constants.*;
 
 //@Slf4j
 @RequiredArgsConstructor
@@ -74,7 +73,7 @@ class RemoteJMSClient implements Client {
             return;
         }
         if(text.startsWith("/q")) {
-            jmsWriter.write(new JMSMessage(MESSAGE_QUIT_PREFIX, "@server", name));
+            jmsWriter.write(new JMSMessage(MESSAGE_QUIT_PREFIX, SERVER_ENDPOINT_NAME, name));
             messageRouter.sendMessage(new Message(MessageType.MESSAGE_USER_DISCONNECTED, getName(), null, null));
             return;
         }
@@ -235,11 +234,11 @@ class RemoteJMSClient implements Client {
 
     @SneakyThrows
     private void write(String text, String prefix) {
-        jmsWriter.write(new JMSMessage((prefix == null ? Constants.MESSAGE_TEXT_PREFIX : prefix) + text, "@server", name));
+        jmsWriter.write(new JMSMessage((prefix == null ? Constants.MESSAGE_TEXT_PREFIX : prefix) + text, SERVER_ENDPOINT_NAME, name));
     }
 
     private void storeInHistory(Message message) {
-        sendMessage(MessageType.MESSAGE_HISTORY_STORE, getName(), Constants.HISTORY_ENDPOINT_NAME, formatMessage(message));
+        sendMessage(MessageType.MESSAGE_HISTORY_STORE, getName(), HISTORY_ENDPOINT_NAME, formatMessage(message));
     }
 
     private String formatMessage(Message message) {
