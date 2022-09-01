@@ -6,6 +6,7 @@ import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
+@NoArgsConstructor
 public class FileBinaryData implements EntityToStore {
     @Id
     UUID id;

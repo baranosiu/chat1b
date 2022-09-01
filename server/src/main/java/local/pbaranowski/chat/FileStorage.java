@@ -1,9 +1,14 @@
 package local.pbaranowski.chat;
 
+import local.pbaranowski.chat.persistence.FileBinaryData;
+
 import java.util.List;
+import java.util.UUID;
 
 public interface FileStorage {
     boolean publish(Message message) throws MaxFilesExceededException;
+    void saveBinaryData(FileBinaryData fileBinaryData) ;
+    FileBinaryData loadBinaryData(UUID fileid) ;
     void delete(String key);
     boolean hasFile (String key);
     List<String> getFilesOnChannel(String channel);

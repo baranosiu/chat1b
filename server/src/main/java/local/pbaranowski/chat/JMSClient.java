@@ -13,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static local.pbaranowski.chat.commons.Constants.HELP_FILE;
+import static local.pbaranowski.chat.commons.Constants.MESSAGE_QUIT_PREFIX;
 
 //@Slf4j
 @NoArgsConstructor
@@ -24,7 +25,6 @@ class JMSClient implements Client {
     private JMSWriter jmsWriter;
     private String lastDestination;
     private static final String MESSAGE_FORMAT_STRING = "%s->%s %s";
-    private final Object synchronizationObject = new Object();
 
     @SneakyThrows
     @Override
@@ -68,7 +68,7 @@ class JMSClient implements Client {
             return;
         }
         if(text.startsWith("/q")) {
-            jmsWriter.write(new ChatMessage("q:", "@server", name));
+            jmsWriter.write(new ChatMessage(MESSAGE_QUIT_PREFIX, "@server", name));
             messageRouter.sendMessage(new Message(MessageType.MESSAGE_USER_DISCONNECTED, getName(), null, null));
             return;
         }

@@ -1,15 +1,12 @@
 package local.pbaranowski.chat;
 
 import local.pbaranowski.chat.commons.MessageType;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.util.Iterator;
-import java.util.List;
 
 import static local.pbaranowski.chat.commons.Constants.HISTORY_ENDPOINT_NAME;
 
@@ -31,10 +28,10 @@ class HistoryClient implements Client {
         log.info("HistoryClient write() {}", message);
         switch (message.getMessageType()) {
             case MESSAGE_HISTORY_STORE:
-                save(message); // TODO - implementacja JPA
+                save(message);
                 break;
             case MESSAGE_HISTORY_RETRIEVE:
-                retrieveHistory(message); // TODO - implementacja JPA
+                retrieveHistory(message);
                 break;
             default:
                 break;

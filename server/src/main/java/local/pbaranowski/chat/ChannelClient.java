@@ -2,12 +2,10 @@ package local.pbaranowski.chat;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 
 import static local.pbaranowski.chat.commons.Constants.SERVER_ENDPOINT_NAME;
 import static local.pbaranowski.chat.commons.MessageType.*;
 
-//@Slf4j
 @RequiredArgsConstructor
 class ChannelClient implements Client {
     private final String name;
@@ -22,8 +20,6 @@ class ChannelClient implements Client {
 
     @Override
     public void write(Message message) {
-//        LogSerializer serializer = new CSVLogSerializer();
-//        log.info(serializer.fromMessageToString(message));
         switch (message.getMessageType()) {
             case MESSAGE_TO_ALL: // Kanał nie odpowiada na wiadomości do wszystkich użytkowników
                 break;
@@ -33,7 +29,6 @@ class ChannelClient implements Client {
                 }
                 break;
             case MESSAGE_JOIN_CHANNEL:
-//                log.info("Join channel {}->{}", message.getSender(), message.getReceiver());
                 clients.add(messageRouter.getClients().getClient(message.getSender()));
                 writeToAll(message.getSender() + " joined channel");
                 break;

@@ -7,7 +7,7 @@ import java.util.Properties;
 
 public class ProxyFactory {
     private static final String INITIAL_CONTEXT_FACTORY = "org.wildfly.naming.client.WildFlyInitialContextFactory";
-    private static final String PROVIDER_URL = "jnp://localhost:8080";
+//    private static final String PROVIDER_URL = "jnp://localhost:8080";
     private static final String CLIENT_EJB_CONTEXT = "jboss.naming.client.ejb.context";
     private final InitialContext initialContext;
 

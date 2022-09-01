@@ -87,7 +87,7 @@ class FTPClient implements Client {
             return;
         }
 
-        if (false /* TODO Sprawdzanie czy plik istnieje*/) {
+        if (false) { // TODO Do zrobienia prawdzanie czy plik istnieje
             messageRouter.sendMessage(MessageType.MESSAGE_TEXT, FTP_ENDPOINT_NAME, message.getSender(), "ERROR: No file with id = " + message.getReceiver());
         } else {
             String storageFilename = fileStorage.getStorageFileName(message.getReceiver());

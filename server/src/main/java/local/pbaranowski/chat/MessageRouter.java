@@ -15,7 +15,7 @@ import javax.jms.JMSException;
 import java.util.LinkedList;
 import java.util.List;
 
-import static local.pbaranowski.chat.commons.Constants.SERVER_ENDPOINT_NAME;
+import static local.pbaranowski.chat.commons.Constants.*;
 import static local.pbaranowski.chat.commons.MessageType.MESSAGE_TEXT;
 
 @Slf4j
@@ -24,11 +24,10 @@ import static local.pbaranowski.chat.commons.MessageType.MESSAGE_TEXT;
 public class MessageRouter {
     @Getter
     private final ClientsCollection<Client> clients = new HashMapClients<>();
-    //    private LogSerializer logSerializer;
     @Inject
     private JMSWriter jmsClient;
     @Inject
-    private HistoryClient historyClient;// = new HistoryClient();
+    private HistoryClient historyClient;
     @Inject
     private FTPClient ftpClient;
 
@@ -41,18 +40,15 @@ public class MessageRouter {
     }
 
     void receiveJMSMessage(javax.jms.Message message) {
-//        log.info("###### MESSAGE RECEIVED! ###########");
         try {
             ChatMessage chatMessage = message.getBody(ChatMessage.class);
             if (chatMessage.getFromId().equals("@server"))
                 return;
-//            log.info("Incoming ChatMessage: {}", chatMessage.toString());
             if (chatMessage.getToId().equals("@login")) {
                 loginUser(chatMessage);
                 return;
             }
             var client = clients.getClient(message.getBody(ChatMessage.class).getFromId());
-            System.out.println("########### Client: " + client.getName());
             if (client instanceof JMSClient) {
                 ((JMSClient) client).messageFromJMS(chatMessage.getBody()); //TODO sprawdzić, czy działa
             }
@@ -64,18 +60,18 @@ public class MessageRouter {
     private void loginUser(ChatMessage chatMessage) {
         String nickname = chatMessage.getBody().trim();
         if (!NameValidators.isNameValid(nickname)) {
-            jmsClient.write(new ChatMessage("m: Invalid nickname. Enter name \\w{3,16}", "@server", chatMessage.getFromId()));
+            jmsClient.write(new ChatMessage(MESSAGE_TEXT_PREFIX + "Invalid nickname. Enter name \\w{3,16}", "@server", chatMessage.getFromId()));
             return;
         }
         if (getClients().contains(nickname)) {
-            jmsClient.write(new ChatMessage("m:" + "Nick " + nickname + " already in use", "@server", chatMessage.getFromId()));
+            jmsClient.write(new ChatMessage(MESSAGE_TEXT_PREFIX + "Nick " + nickname + " already in use", "@server", chatMessage.getFromId()));
             return;
         }
         JMSClient JMSClient = new JMSClient();
         JMSClient.setName(nickname);
         JMSClient.setMessageRouter(this);
         JMSClient.setJmsWriter(jmsClient);
-        jmsClient.write(new ChatMessage("n:" + nickname, "@server", chatMessage.getFromId()));
+        jmsClient.write(new ChatMessage(MESSAGE_SET_NICKNAME_PREFIX + nickname, "@server", chatMessage.getFromId()));
         JMSClient.jmsClientInit();
     }
 
@@ -85,7 +81,6 @@ public class MessageRouter {
     }
 
     Message sendMessage(Message message) {
-//        log.info(logSerializer.fromMessageToString(message));
         switch (message.getMessageType()) {
             case MESSAGE_TO_ALL:
                 clients.forEach(client -> client.write(message));

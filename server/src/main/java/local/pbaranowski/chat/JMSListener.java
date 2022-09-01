@@ -4,8 +4,6 @@ import local.pbaranowski.chat.commons.ChatMessage;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.ejb.ActivationConfigProperty;
-import javax.ejb.Asynchronous;
-import javax.ejb.EJB;
 import javax.ejb.MessageDriven;
 import javax.inject.Inject;
 import javax.jms.JMSException;

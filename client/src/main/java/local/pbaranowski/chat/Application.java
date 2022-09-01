@@ -16,7 +16,7 @@ import static local.pbaranowski.chat.commons.Constants.*;
 
 @Slf4j
 public class Application {
-    private JMSClient jmsClient;
+    private final JMSClient jmsClient;
     private String nickname = UUID.randomUUID().toString();
     private final String loginRandomNickname = nickname;
     private String destinationSystem = "@login";
@@ -39,7 +39,7 @@ public class Application {
                 } else if (line.startsWith(MESSAGE_SET_NICKNAME_PREFIX)) {
                     setNickname(line.substring(2));
                     destinationSystem = "@server";
-                } else if (line.startsWith("q:")) {
+                } else if (line.startsWith(MESSAGE_QUIT_PREFIX)) {
                     quit();
                 }
             } catch (JMSException e) {

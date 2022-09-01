@@ -66,6 +66,6 @@ public class EntityRepository<T extends EntityToStore> {
     public List<T> find(UUID id) {
         String query = "SELECT e FROM " + getTableName() + " e " + (id == null ? "" : "WHERE e.id = '" + id + "'");
         log.info("query: {}", query);
-        return entityManager.createQuery(query).getResultList();
+        return (List<T>) entityManager.createQuery(query).getResultList();
     }
 }

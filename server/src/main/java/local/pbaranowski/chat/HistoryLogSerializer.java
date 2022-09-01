@@ -1,13 +1,12 @@
 package local.pbaranowski.chat;
 
 import javax.ejb.Stateful;
-import javax.ejb.Stateless;
 
-// Tymczasowo, dopóki nie ma składowania w formacie JSON
+// W chwili obecnej pusta "przelotka" (klasa klienta decyduje w jakim formacie chce mieć odłożony wpis w historii)
 @Stateful
-class HistoryLogSerializer implements LogSerializer{
+class HistoryLogSerializer implements LogSerializer {
     @Override
     public String fromMessageToString(Message message) {
-        return String.format("%s",message.getPayload());
+        return String.format("%s", message.getPayload());
     }
 }

@@ -21,7 +21,6 @@ public class JPAFileStorage implements FileStorage {
 
     @PostConstruct
     public void init() {
-        log.info("############# JPAFileStorage postconstruct");
         this.binaryEntityRepository = new BinaryEntityRepository();
     }
 
@@ -95,6 +94,20 @@ public class JPAFileStorage implements FileStorage {
         return filesUploaded.get(key).getStorageFilename();
     }
 
+    @Override
+    public void saveBinaryData(FileBinaryData fileBinaryData) {
+        binaryEntityRepository.save(fileBinaryData);
+    }
+
+    @Override
+    public FileBinaryData loadBinaryData(UUID fileid) {
+        List<FileBinaryData> result = binaryEntityRepository.find(fileid);
+        if (result.isEmpty()) {
+            return null;
+        }
+        return result.get(0);
+    }
+
     private String createUniqueFileKey() throws MaxFilesExceededException {
         for (int i = 1; i <= Constants.MAX_NUMBER_OF_FILES_IN_STORAGE; i++) {
             String key = Integer.toString(i);
@@ -102,18 +115,6 @@ public class JPAFileStorage implements FileStorage {
                 return key;
         }
         throw new MaxFilesExceededException();
-    }
-
-    public void saveBinaryData(FileBinaryData fileBinaryData) {
-        binaryEntityRepository.save(fileBinaryData);
-    }
-
-    public FileBinaryData loadBinaryData(UUID fileid) {
-        List<FileBinaryData> result = binaryEntityRepository.find(fileid);
-        if (result.isEmpty()) {
-            return null;
-        }
-        return result.get(0);
     }
 
 }
