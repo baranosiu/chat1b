@@ -7,12 +7,12 @@ import java.util.Properties;
 
 public class ProxyFactory {
     private static final String INITIAL_CONTEXT_FACTORY = "org.wildfly.naming.client.WildFlyInitialContextFactory";
-    private static final String PROVIDER_URL = "http-remoting://127.0.0.1:8080";
+    private static String PROVIDER_URL = "http-remoting://127.0.0.1:8080";
     private static final String CLIENT_EJB_CONTEXT = "jboss.naming.client.ejb.context";
     private final InitialContext initialContext;
 
-    public ProxyFactory() throws NamingException {
-        this(prepareJndiProperties());
+    public ProxyFactory(String endpoint) throws NamingException {
+        this(prepareJndiProperties(endpoint));
     }
 
     public ProxyFactory(Properties properties) throws NamingException {
@@ -23,8 +23,11 @@ public class ProxyFactory {
         return (T) initialContext.lookup(jndiName);
     }
 
-    private static Properties prepareJndiProperties() {
+    private static Properties prepareJndiProperties(String endpoint) {
         var properties = new Properties();
+        if(endpoint != null) {
+            PROVIDER_URL = "http-remoting://"+endpoint;
+        }
         properties.put(Context.INITIAL_CONTEXT_FACTORY, INITIAL_CONTEXT_FACTORY);
         properties.put(Context.PROVIDER_URL, PROVIDER_URL);
         properties.put(Context.SECURITY_AUTHENTICATION,"simple");

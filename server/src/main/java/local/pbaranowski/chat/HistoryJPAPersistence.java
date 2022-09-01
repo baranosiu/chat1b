@@ -6,23 +6,18 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.persistence.EntityManagerFactory;
 import java.util.Iterator;
 
 @Slf4j
 @ApplicationScoped
 public class HistoryJPAPersistence implements HistoryPersistence {
     private final LogSerializer logSerializer = new HistoryLogSerializer();
-    @Inject
-    private RepoFactory repoFactory;
     private HistoryEntityRepository historyEntityRepository;
 
     @PostConstruct
     public void init() {
         log.info("############# HistoryJPAPersistance postconstruct");
-        EntityManagerFactory factory = repoFactory.getEntityManagerFactory();
-        this.historyEntityRepository = new HistoryEntityRepository(factory);
+        this.historyEntityRepository = new HistoryEntityRepository();
     }
 
     @SneakyThrows

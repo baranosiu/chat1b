@@ -10,8 +10,8 @@ public class JMSClient {
     private JMSProducer jmsProducer;
     private Topic topic;
 
-    public JMSClient() throws NamingException {
-        var proxyFactory = new ProxyFactory();
+    public JMSClient(String endpoint) throws NamingException {
+        var proxyFactory = new ProxyFactory(endpoint);
         ConnectionFactory connectionFactory = proxyFactory.createProxy(JMS_FACTORY);
         topic = proxyFactory.createProxy(JMS_TOPIC);
         var jmsContext = connectionFactory.createContext();

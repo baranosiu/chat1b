@@ -1,7 +1,6 @@
 package local.pbaranowski.chat.persistence;
 
 import lombok.*;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.UUID;

@@ -1,12 +1,7 @@
 package local.pbaranowski.chat.persistence;
 
-import local.pbaranowski.chat.persistence.EntityToStore;
 import lombok.extern.slf4j.Slf4j;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.Metamodel;
 import java.util.List;
@@ -15,11 +10,11 @@ import java.util.function.BiConsumer;
 
 @Slf4j
 public class EntityRepository<T extends EntityToStore> {
-    protected final EntityManager entityManager;
+    protected EntityManager entityManager;
     protected final Class<T> entityClass;
 
-    public EntityRepository(EntityManagerFactory entityManagerFactory, Class<T> entityClass) {
-        this.entityManager = entityManagerFactory.createEntityManager();
+    public EntityRepository(Class<T> entityClass) {
+        this.entityManager = EMFactory.getEntityManagerFactory().createEntityManager();
         this.entityClass = entityClass;
     }
 
@@ -73,5 +68,4 @@ public class EntityRepository<T extends EntityToStore> {
         log.info("query: {}", query);
         return entityManager.createQuery(query).getResultList();
     }
-
 }

@@ -2,10 +2,7 @@ package local.pbaranowski.chat;
 
 import lombok.Value;
 
-import javax.persistence.Entity;
-
-// TODO: To trzeba będzie przerobić w taki sposób, aby FTPClient nie musiał wiedzieć jaka jest struktura danych w storage
-// czyli odpytywanie metodami na podstawie klucza o poszczególne dane a nie poprzez przekazywanie rekordu
+// TODO: Przerobić w taki sposób, aby FTPClient nie musiał wiedzieć jaka jest struktura danych w storage
 @Value
 class FileStorageRecord {
     String sender;

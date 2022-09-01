@@ -16,13 +16,13 @@ import static local.pbaranowski.chat.commons.Constants.*;
 
 @Slf4j
 public class Application {
-
-    private final JMSClient jmsClient = new JMSClient();
+    private JMSClient jmsClient;
     private String nickname = UUID.randomUUID().toString();
     private final String loginRandomNickname = nickname;
     private String destinationSystem = "@login";
 
-    public Application(String host, int port) throws NamingException {
+    public Application(String endpoint) throws NamingException {
+        jmsClient = new JMSClient(endpoint);
         jmsClient.setJMSListener(message -> {
             try {
                 ChatMessage chatMessage = message.getBody(ChatMessage.class);
@@ -53,13 +53,11 @@ public class Application {
     }
 
     public static void main(String[] args) throws IOException, NamingException {
-        int port = DEFAULT_PORT;
-        String host = DEFAULT_HOST;
-        if (args.length == 2) {
-            host = args[0];
-            port = Integer.parseInt(args[1]);
+        String endpoint = DEFAULT_ENDPOINT;
+        if (args.length == 1) {
+            endpoint = args[0];
         }
-        Application application = new Application(host, port);
+        Application application = new Application(endpoint);
         application.consoleLoop();
     }
 

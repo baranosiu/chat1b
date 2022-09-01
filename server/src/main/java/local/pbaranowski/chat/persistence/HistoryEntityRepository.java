@@ -7,8 +7,8 @@ import java.util.List;
 
 @Slf4j
 public class HistoryEntityRepository extends EntityRepository<HistoryRecord> {
-    public HistoryEntityRepository(EntityManagerFactory entityManagerFactory) {
-        super(entityManagerFactory, HistoryRecord.class);
+    public HistoryEntityRepository() {
+        super(HistoryRecord.class);
     }
 
     public List<String> findNickname(String user) {

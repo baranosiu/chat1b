@@ -34,10 +34,6 @@ public class RESTFileAccess {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     @SneakyThrows
     public Response downloadFile(@PathParam("id") String fileId) {
-//        try (FileInputStream fileInputStream = new FileInputStream("/tmp/" + fileId)) {
-//            return Response.ok(fileInputStream.readAllBytes(), MediaType.APPLICATION_OCTET_STREAM)
-//                    .build();
-//        }
         FileBinaryData fileBinaryData = jpaFileStorage.loadBinaryData(UUID.fromString(fileId));
         if (fileBinaryData == null)
             return Response.noContent().build();
