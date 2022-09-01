@@ -1,7 +1,7 @@
 package local.pbaranowski.chat;
 
 import local.pbaranowski.chat.commons.Constants;
-import local.pbaranowski.chat.persistence.EntityRepository;
+import local.pbaranowski.chat.persistence.BinaryEntityRepository;
 import local.pbaranowski.chat.persistence.JPABinaryData;
 import local.pbaranowski.chat.persistence.RepoFactory;
 import lombok.SneakyThrows;
@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.persistence.EntityManagerFactory;
 import java.io.File;
 import java.io.IOException;
@@ -25,17 +26,18 @@ import java.util.stream.Collectors;
 import static java.util.Collections.synchronizedMap;
 
 @Slf4j
-@ApplicationScoped
+@Singleton
 public class JPAFileStorage implements FileStorage {
     private final Map<String, FileStorageRecord> filesUploaded = synchronizedMap(new HashMap<>());
-    private EntityRepository<JPABinaryData> binaryStorage = null;
     @Inject
     private RepoFactory repoFactory;
+    private BinaryEntityRepository binaryEntityRepository;
 
     @PostConstruct
     public void init() {
         log.info("############# JPAFileStorage postconstruct");
-        this.binaryStorage = new EntityRepository<JPABinaryData>(repoFactory.getEntityManagerFactory(),JPABinaryData.class);
+        EntityManagerFactory factory = repoFactory.getEntityManagerFactory();
+        this.binaryEntityRepository = new BinaryEntityRepository(factory);
     }
 
     @Override
@@ -136,7 +138,7 @@ public class JPAFileStorage implements FileStorage {
         throw new MaxFilesExceededException();
     }
 
-    public void writeEntity(JPABinaryData jpaBinaryData) {
-        binaryStorage.save(jpaBinaryData);
+    public void storeBinaryData(JPABinaryData jpaBinaryData) {
+        binaryEntityRepository.save(jpaBinaryData);
     }
 }

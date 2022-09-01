@@ -22,8 +22,8 @@ public class HistoryJPAPersistence implements HistoryPersistence {
     @PostConstruct
     public void init() {
         log.info("############# HistoryJPAPersistance postconstruct");
-        EntityManagerFactory FACTORY = repoFactory.getEntityManagerFactory();
-        this.historyEntityRepository = new HistoryEntityRepository(FACTORY);
+        EntityManagerFactory factory = repoFactory.getEntityManagerFactory();
+        this.historyEntityRepository = new HistoryEntityRepository(factory);
     }
 
     @SneakyThrows

@@ -25,8 +25,8 @@ public class RESTFileAccess {
     public String uploadFile(@PathParam("id") String fileId, byte[] fileData) {
         log.info("REST: POST {} {}", fileId, fileData);
         jpaFileStorage.echo(fileId);
-        JPABinaryData jpaBinaryData = new JPABinaryData(fileId,"Tu leca binarne dane");
-        jpaFileStorage.writeEntity(jpaBinaryData);
+        JPABinaryData jpaBinaryData = new JPABinaryData(fileId,"Tu leca binarne dane".getBytes());
+        jpaFileStorage.storeBinaryData(jpaBinaryData);
         return "OK";
     }
 
