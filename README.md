@@ -12,7 +12,7 @@ Wymagana Java 11.
 1. Kompilacja:
 `mvn package`
 2. Ustawienie rozwiązywania nazwy `postgresql` na hosta, na którym jest zainstalowany PostgreSQL (na przykład dodanie wpisu pod Linuxem do `/etc/hosts` lub pod Windowsem do `C:\Windows\System32\drivers\etc\hosts`)
-3. Uruchomienie PostgreSQL (baza o nazwie `chat` dostępna dla użytkownika user/password `chat/chat`), można wykorzystać komponent Dockera z projektu uruchamiając poleceniem `docker-compose up -d postgresql`.
+3. Uruchomienie PostgreSQL (baza o nazwie `chat` dostępna dla użytkownika user/password `admin/admin`), można wykorzystać komponent Dockera z projektu uruchamiając poleceniem `docker-compose up -d postgresql`.
 4. Utworzenie pod Wildfly użytkownika `chat/chat` na przykład poleceniem `add-user -a -u chat -p chat`
 5. Skopiowanie pliku `docker-wildfly/chat.xml` do `WILDFLY_HOME/standalone/configurations`
 6. Skopiowanie pliku `server/target/server-2.0.war` do `WILDFLY_HOME/standalone/deployments`
