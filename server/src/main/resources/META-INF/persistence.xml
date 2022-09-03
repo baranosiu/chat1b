@@ -4,15 +4,14 @@
              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd"
              version="2.2">
     <persistence-unit name="Chat" transaction-type="RESOURCE_LOCAL">
-<!--        <jta-data-source>java:/ChatDS</jta-data-source>-->
         <class>local.pbaranowski.chat.persistence.HistoryRecord</class>
         <class>local.pbaranowski.chat.persistence.FileBinaryData</class>
         <properties>
             <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://postgresql:5432/chat"/>
+<!--            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://127.0.0.1:5432/chat"/>-->
             <property name="javax.persistence.jdbc.user" value="admin"/>
             <property name="javax.persistence.jdbc.password" value="admin" />
             <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
-<!---->
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
             <property name="hibernate.hbm2ddl.auto" value="create-drop" />
