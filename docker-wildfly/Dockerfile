@@ -12,4 +12,4 @@ RUN /opt/jboss/wildfly/bin/add-user.sh -a -u 'chat' -p 'chat'
 #RUN sed 's/jboss.bind.address.unsecure:127.0.0.1/jboss.bind.address.unsecure:wildfly/g' -i /opt/jboss/wildfly/standalone/configuration/chat.xml
 RUN /opt/jboss/wildfly/bin/add-user.sh -e -u 'admin' -p 'admin'
 
-CMD ["/opt/jboss/wildfly/bin/standalone.sh","-b","wildfly","-c","chat.xml"]
+CMD ["/opt/jboss/wildfly/bin/standalone.sh","-b","192.168.1.128","-c","chat.xml"]

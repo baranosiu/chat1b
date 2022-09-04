@@ -7,8 +7,8 @@
         <class>local.pbaranowski.chat.persistence.HistoryRecord</class>
         <class>local.pbaranowski.chat.persistence.FileBinaryData</class>
         <properties>
-            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://postgresql:5432/chat"/>
-<!--            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://127.0.0.1:5432/chat"/>-->
+<!--            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://postgresql:5432/chat"/>-->
+            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://127.0.0.1:5432/chat"/>
             <property name="javax.persistence.jdbc.user" value="admin"/>
             <property name="javax.persistence.jdbc.password" value="admin" />
             <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
