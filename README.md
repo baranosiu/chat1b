@@ -28,7 +28,7 @@ Należy w tym celu wykonać następujące zmiany:
 3. W pliku `persistence.xml` zmienić adres serwera z `postgresql` na `127.0.0.1` (zakomentować wiersz 10 i odkomentować 11)
 4. Ponownie skompilować projekt przez `mvn clean package` a następnie ponownie zbudować obrazy dla dockera przez `docker-compose build`
 
-Jako że w takiej konfiguracji kontenery korzystają z natywnego interfejsu sieciowego komputera, to nie działa mapowanie portów ustawione w dccker-compose.yml, a więc odpowiednie porty (8080, 9990 i 5432) nie mogą być zajęte przez inne usługi (i muszą być otwarte na firewallu).
+Jako że w takiej konfiguracji kontenery korzystają z natywnego interfejsu sieciowego komputera, to nie działa mapowanie portów ustawione w dccker-compose.yml, a więc odpowiednie porty (8080, 9990 i 5432) nie mogą być zajęte przez inne usługi (i port 8080 otwarty na firewallu).
 
 ## Do przedyskutowania z Łukaszem na spotkaniu 11. września
 ### JPA i klasy `@Entity`
