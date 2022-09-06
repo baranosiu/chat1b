@@ -145,7 +145,7 @@ class RemoteJMSClient implements Client {
     private void eraseFile(String text) {
         String[] fields = text.split("[ ]+", 2);
         if (fields.length == 2) {
-            sendMessage(MessageType.MESSAGE_DELETE_FILE, getName(), null, fields[1]);
+            sendMessage(MessageType.MESSAGE_DELETE_FILE, getName(), fields[1], null);
         }
     }
 
