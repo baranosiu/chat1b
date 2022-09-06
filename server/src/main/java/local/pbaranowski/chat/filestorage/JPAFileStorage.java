@@ -45,7 +45,7 @@ public class JPAFileStorage implements FileStorage {
         FileStorageRecord file = filesUploaded.get(key);
         if (file != null) {
                 filesUploaded.remove(key);
-                binaryEntityRepository.delete(UUID.fromString(key));
+                binaryEntityRepository.delete(UUID.fromString(file.getStorageFilename()));
         }
     }
 

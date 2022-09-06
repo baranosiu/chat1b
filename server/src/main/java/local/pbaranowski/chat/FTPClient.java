@@ -52,14 +52,14 @@ public class FTPClient implements Client {
     }
 
     private void delete(Message message) {
-        if (!fileStorage.hasFile(message.getPayload())) {
-            messageRouter.sendMessage(MessageType.MESSAGE_TEXT, FTP_ENDPOINT_NAME, message.getSender(), "ERROR: No file (id = " + message.getPayload() + ")");
+        if (!fileStorage.hasFile(message.getReceiver())) {
+            messageRouter.sendMessage(MessageType.MESSAGE_TEXT, FTP_ENDPOINT_NAME, message.getSender(), "ERROR: No file (id = " + message.getReceiver() + ")");
             return;
         }
-        if (message.getSender().equals(fileStorage.getSender(message.getPayload()))) {
-            fileStorage.delete(message.getPayload());
+        if (message.getSender().equals(fileStorage.getSender(message.getReceiver()))) {
+            fileStorage.delete(message.getReceiver());
         } else {
-            messageRouter.sendMessage(MessageType.MESSAGE_TEXT, FTP_ENDPOINT_NAME, message.getSender(), "ERROR: Not owner (id = " + message.getPayload() + ")");
+            messageRouter.sendMessage(MessageType.MESSAGE_TEXT, FTP_ENDPOINT_NAME, message.getSender(), "ERROR: Not owner (id = " + message.getReceiver() + ")");
         }
     }
 
