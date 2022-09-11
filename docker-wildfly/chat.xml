@@ -137,20 +137,20 @@
                         <password>sa</password>
                     </security>
                 </datasource>
-<!--                <datasource jndi-name="java:/ChatDS" pool-name="ChatDS">-->
-<!--                    <connection-url>jdbc:postgresql://postgresql:5432/chat</connection-url>-->
-<!--                    <driver-class>org.postgresql.Driver</driver-class>-->
-<!--                    <driver>postgresql-42.4.2.jar</driver>-->
-<!--                    <security>-->
-<!--                        <user-name>admin</user-name>-->
-<!--                        <password>admin</password>-->
-<!--                    </security>-->
-<!--                    <validation>-->
-<!--                        <valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker"/>-->
-<!--                        <validate-on-match>true</validate-on-match>-->
-<!--                        <exception-sorter class-name="org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLExceptionSorter"/>-->
-<!--                    </validation>-->
-<!--                </datasource>-->
+                <datasource jndi-name="java:/ChatDS" pool-name="ChatDS">
+                    <connection-url>jdbc:postgresql://postgresql:5432/chat</connection-url>
+                    <driver-class>org.postgresql.Driver</driver-class>
+                    <driver>postgresql-42.4.2.jar</driver>
+                    <security>
+                        <user-name>admin</user-name>
+                        <password>admin</password>
+                    </security>
+                    <validation>
+                        <valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker"/>
+                        <validate-on-match>true</validate-on-match>
+                        <exception-sorter class-name="org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLExceptionSorter"/>
+                    </validation>
+                </datasource>
                 <drivers>
                     <driver name="h2" module="com.h2database.h2">
                         <xa-datasource-class>org.h2.jdbcx.JdbcDataSource</xa-datasource-class>
