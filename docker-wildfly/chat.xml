@@ -138,7 +138,7 @@
                     </security>
                 </datasource>
                 <datasource jndi-name="java:/ChatDS" pool-name="ChatDS">
-                    <connection-url>jdbc:postgresql://postgresql:5432/chat</connection-url>
+                    <connection-url>jdbc:postgresql://127.0.0.1:5432/chat</connection-url>
                     <driver-class>org.postgresql.Driver</driver-class>
                     <driver>postgresql-42.4.2.jar</driver>
                     <security>
