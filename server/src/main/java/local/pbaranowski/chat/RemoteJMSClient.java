@@ -72,7 +72,7 @@ class RemoteJMSClient implements Client {
             help();
             return;
         }
-        if(text.startsWith("/q")) {
+        if (text.startsWith("/q")) {
             jmsWriter.write(new JMSMessage(MESSAGE_QUIT_PREFIX, SERVER_ENDPOINT_NAME, name));
             messageRouter.sendMessage(new Message(MessageType.MESSAGE_USER_DISCONNECTED, getName(), null, null));
             return;
@@ -163,7 +163,7 @@ class RemoteJMSClient implements Client {
         }
     }
 
-     private void uploadFile(String text) {
+    private void uploadFile(String text) {
         String[] fields = text.split("[ ]+", 2);
         if (fields.length == 2) {
             sendMessage(MessageType.MESSAGE_APPEND_FILE, getName(), Constants.FTP_ENDPOINT_NAME, fields[1]);
